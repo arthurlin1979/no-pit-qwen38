@@ -62,4 +62,6 @@ For well-behaved models use `./v6/chat_template.jinja` instead.
 * `v6.2-alt/`: reference build
 * `lab/strict-v6.1.jinja`: retired v6.1 experiment draft
 
+Per-block notes: [BLOCKS.md](./BLOCKS.md).
+
 PRs welcome.

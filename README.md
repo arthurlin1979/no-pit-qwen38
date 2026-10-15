@@ -58,4 +58,4 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v6.2/chat_template.j
 * `v6.2-alt/`：參考版成品
 * `lab/strict-v6.1.jinja`：v6.1 實驗草稿（已退回，留念）
 
-有更好的寫法也歡迎提出來。
+各區塊簡介見 [BLOCKS.md](./BLOCKS.md)。
