@@ -1,0 +1,16 @@
+1c1
+< {%- set template_version = "qwen3.8-froggeric-v22.5-arthur-strict-v6" %}
+---
+> {%- set template_version = "qwen3.8-froggeric-v22.5-arthur-strict-v6.2" %}
+203c203
+<         {{- '- The <tool_call> and <function> tags MUST be at the very beginning of a new line, with NO spaces or indentation before them.\n- To call multiple functions, output a separate, completely closed <tool_call></tool_call> block for EACH function. Do NOT nest <tool_call> blocks. \n- SERIAL RULE (overrides the multiple-functions line above): Call at most ONE function per turn. Emit exactly one <tool_call> block, then stop and wait for the tool result before doing anything else. NEVER emit two or more <tool_call> blocks in a single response.\n- If you have all necessary data, provide your final answer directly to the user without any tool call.\n</IMPORTANT>' }}
+---
+>         {{- '- The <tool_call> and <function> tags MUST be at the very beginning of a new line, with NO spaces or indentation before them.\n- To call multiple functions, output a separate, completely closed <tool_call></tool_call> block for EACH function. Do NOT nest <tool_call> blocks.\n- If you reason first, you MUST close thinking with </think> before the <tool_call> block. NEVER omit the opening <tool_call> tag.\n- SERIAL RULE (overrides the multiple-functions line above): Call at most ONE function per turn. Emit exactly one <tool_call> block, then stop and wait for the tool result before doing anything else. NEVER emit two or more <tool_call> blocks in a single response.\n- If you have all necessary data, provide your final answer directly to the user without any tool call.\n</IMPORTANT>' }}
+310a311,313
+>             {%- if not _think_end and '<tool_call>' in content and '<think>' in content %}
+>                 {%- set _think_end = '<tool_call>' %}
+>             {%- endif %}
+325c328
+<         {%- if (_preserve_thinking or loop.index0 > ns.last_query_index) %}
+---
+>         {%- if reasoning_content and (_preserve_thinking or loop.index0 > ns.last_query_index) %}
