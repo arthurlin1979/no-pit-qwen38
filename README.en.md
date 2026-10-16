@@ -28,8 +28,8 @@ llama.cpp / vLLM / SGLang / oMLX).
 
 ## Tested scope
 
-* Target: Qwen3.8 series on the Strata stack.
-* Quantizations: NVFP4, IQ3, IQ2, including uncensored variants.
+* Target: Qwen3.8-Next-Flash (Strata stack).
+* Quantizations: NVFP4, IQ3, IQ2, OQ4, including uncensored variants; Mac Studio tested on OQ4.
 * Hardware: RTX PRO 6000, RTX 5090, RTX 5060 Ti 16G, Mac Studio.
 
 ## Changes (project modifications only)

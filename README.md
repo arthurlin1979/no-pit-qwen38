@@ -26,8 +26,8 @@ vLLM / SGLang / oMLX）。
 
 ## 實測範圍
 
-* 對齊目標：Strata 架構上的 Qwen3.8 系列模型。
-* 模型精度：NVFP4、IQ3、IQ2，含去審查版（uncensored）。
+* 對齊目標：Qwen3.8-Next-Flash（Strata 架構）。
+* 模型精度：NVFP4、IQ3、IQ2、OQ4，含去審查版（uncensored）；其中 Mac Studio 為 OQ4。
 * 驗證硬體：RTX PRO 6000、RTX 5090、RTX 5060 Ti 16G、Mac Studio。
 
 ## 修改內容（僅列本專案的變更）
