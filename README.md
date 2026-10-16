@@ -2,66 +2,70 @@
 
 [English](./README.en.md) | 中文版
 
-Qwen 這系列模型，腦子是真的不錯，但格式遵循（format following）很瞎。
-尤其是量化（quantization）壓得越小越離譜：工具呼叫（tool call）失敗就一直重試，
-還會冒奇怪字元，對話講到一半直接斷掉。所以我改了它的輸出模板（chat template），
-讓它回到該有的樣子。
+本專案用於改善 Qwen3.8 系列模型的輸出模板（chat template）。Qwen3.8
+模型能力優秀，但格式遵循（format following）不穩定：量化（quantization）
+程度越小，工具呼叫（tool call）格式錯誤越頻繁，常伴隨異常字元與對話
+異常中斷。本專案透過客製輸出模板修正上述問題。
 
-只要吃 jinja 的地方都能套（LM Studio / llama.cpp / vLLM / SGLang / oMLX），
-我自己這系列的模型全上了。
+適用範圍：所有支援 Jinja 模板的推理引擎（LM Studio / llama.cpp /
+vLLM / SGLang / oMLX）。
 
-## 三個版本，拿一個就好
+## 版本說明
 
-| 版本 | 給誰 | 裡面有什麼 | 檔案 |
+| 版本 | 適用對象 | 內容概要 | 位置 |
 |---|---|---|---|
-| v6 | NVFP4 這種乖模型 | 繁中一句＋單發限制（SERIAL RULE）＋輸出契約（output-contract） | `v6/` |
-| v6.2 | 小量化＋破解（uncensored）的，預設拿這個 | v6＋空腦包清理＋未閉合自斷句＋動手前關腦 | `v6.2/` |
-| v6.2-alt | 愛實驗的人 | v6.2＋7 樣沒證實的。有人說有效有人說沒效，自己試，後果自負 | `v6.2-alt/` |
+| v6 | NVFP4 等格式遵循良好的模型 | 繁體中文規則＋單發限制（SERIAL RULE）＋輸出契約（output-contract） | `v6/` |
+| v6.2 | 小量化＋破解（uncensored）模型（預設建議版本） | v6＋空思考清理＋未閉合思考自動斷句＋動用工具前關閉思考 | `v6.2/` |
+| v6.2-alt | 實驗參考用 | v6.2＋7 項尚未證實效益的附加項；效果因人而異，請自行驗證 | `v6.2-alt/` |
 
-## 我到底改了什麼（上游的我沒動）
+## 修改內容（僅列本專案的變更）
 
-基底是人家修好的 `froggeric/Qwen-Fixed-Chat-Templates` v22.5（459 行，Apache-2.0，
-作者 Frédéric Guigand）。我只動 7 個地方（hunk），其他逐字一樣，
-證據在 `v6/v6_vs_upstream.diff`。第一行版號是浮水印（watermark），
-模型更新會洗掉客製模板，載入前對一下就知道還在不在。
+基底為 `froggeric/Qwen-Fixed-Chat-Templates` v22.5（459 行，Apache-2.0，
+原作者 Frédéric Guigand）。v6 相對於上游僅 7 個差異塊（hunk），其餘逐字
+相同，完整差異見 `v6/v6_vs_upstream.diff`。模板第一行版本字串為浮水印
+（watermark），因模型更新可能覆寫客製模板，載入前請核對。
 
-* 單發限制（SERIAL RULE）：一輪只准打一通工具電話。說句實話這條最有感，
-  實測原版一次發 2 通，v6 只發 1 通，小模型併發寫壞的老毛病直接沒了。
-* 繁中規則：中文一律繁體台灣用法。坦白說這東西我本來寫在 serve 端，
-  結果條件寫錯從沒生效過，搬進模板才全員吃到。
-* 輸出契約（output-contract）：要 raw JSON / 純原始碼的時候不包 markdown、不加廢話。
-* v6.2 多三樣：空腦包（empty think wrapper）不渲染、腦沒關好遇到工具自己斷句、
-  動工具前必須關腦（MUST close thinking）。
+* 單發限制（SERIAL RULE）：每輪僅允許一個工具呼叫（tool call）區塊。
+  實測：上游原版單輪發出 2 個呼叫，v6 僅發出 1 個，可避免小模型併發
+  呼叫導致的格式損毀。
+* 繁體中文規則（Traditional-Chinese rule）：中文輸出統一採用繁體中文
+  （台灣慣例）。原規則置於服務層但觸發條件錯誤而從未生效，移入模板後
+  所有客戶端均適用。
+* 輸出契約（output-contract）：請求 raw JSON／純原始碼時，僅輸出請求的
+  內容，不附加 Markdown 標記與說明文字。
+* v6.2 新增三項：歷史紀錄中省略空的思考（think）包裝、未閉合思考遇
+  工具呼叫時自動斷句、動用工具前必須關閉思考區塊。
 
-每一塊的細節跟有沒有用，看 [BLOCKS.md](./BLOCKS.md)，沒用的我老實講。
+各區塊詳細說明與實證狀態請見 [BLOCKS.md](./BLOCKS.md)。
 
-## 先講壞消息（測過才敢貼出來）
+## 已知限制（經實測確認）
 
-* 簡體滲漏（simplified-character leak）：長文四篇漏一篇，哪個版本都一樣，
-  模板治不了，是模型本身的天花板。短任務倒是全淨。
-* 思考脹滿（thinking-budget exhaustion）：破解版寫長文會把幾千個 token
-  全拿去想，正文一個字都沒有，換什麼模板都一樣，要 engine 側去限。
-* alt 那 7 樣：單測全都沒跑贏基線，僅供參考。
+* 簡體字滲漏（simplified-character leak）：長篇中文輸出約四分之一機率
+  出現簡體字，各版本皆然，屬模型本身限制，模板無法根治；短篇輸出正常。
+* 思考預算耗盡（thinking-budget exhaustion）：破解版模型處理長篇任務時，
+  可能將全部 token 消耗於思考過程而無正文輸出，更換模板無法改善，需
+  推理引擎側的預算控制機制。
+* alt 版 7 個附加項：隔離測試均未超越基線，僅供實驗參考。
 
-## 怎麼用
+## 使用方式
 
 ```bash
 # vLLM
 vllm serve <model> --chat-template ./v6.2/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
-# SGLang（注意：0.5.x 會無視模型目錄裡的模板，一定要顯式指定）
+# SGLang（注意：0.5.x 版會忽略模型目錄內模板，須顯式指定）
 python -m sglang.launch_server --model-path <model> --chat-template ./v6.2/chat_template.jinja
 # llama.cpp
 llama-server -m <model.gguf> --jinja --chat-template-file ./v6.2/chat_template.jinja
-# LM Studio：Prompt Template 貼上存檔 / oMLX：蓋掉模型目錄那份再重啟
+# LM Studio：貼入 Prompt Template 後存檔 / oMLX：覆寫模型目錄檔案後重啟
 ```
 
-乖模型把路徑換成 `./v6/chat_template.jinja` 就好。
+格式遵循良好的模型請使用 `./v6/chat_template.jinja`。
 
-## 檔案
+## 檔案結構
 
-* `v6/`：v6 成品＋跟上游的差異
-* `v6.2/`：v6.2 成品＋跟 v6 的差異（`v62_vs_v6.diff`）
-* `v6.2-alt/`：參考版成品
-* `lab/strict-v6.1.jinja`：v6.1 實驗草稿，退回了，留著當紀念
+* `v6/`：v6 成品＋與上游的差異比對
+* `v6.2/`：v6.2 成品＋與 v6 的差異比對（`v62_vs_v6.diff`）
+* `v6.2-alt/`：實驗參考版成品
+* `lab/strict-v6.1.jinja`：已退役的 v6.1 實驗草稿
 
-有更好的寫法歡迎提出來。
+歡迎提出改進建議（Pull Request）。
