@@ -12,6 +12,12 @@ customized output templates.
 Scope: any inference engine accepting Jinja templates (LM Studio /
 llama.cpp / vLLM / SGLang / oMLX).
 
+## Upstream
+
+* Base template: [froggeric/Qwen-Fixed-Chat-Templates](https://huggingface.co/froggeric/Qwen-Fixed-Chat-Templates) (v22.5, `855bffc`, Apache-2.0, by Frédéric Guigand)
+* Original model template: [Qwen/Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) (Qwen team, Alibaba Cloud)
+* This project is an independent derivative work, not a GitHub fork; license chain in [NOTICE](./NOTICE).
+
 ## Versions
 
 | Version | Target | Contents | Path |

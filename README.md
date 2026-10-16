@@ -10,6 +10,12 @@
 適用範圍：所有支援 Jinja 模板的推理引擎（LM Studio / llama.cpp /
 vLLM / SGLang / oMLX）。
 
+## 上游出處（upstream）
+
+* 基底模板：[froggeric/Qwen-Fixed-Chat-Templates](https://huggingface.co/froggeric/Qwen-Fixed-Chat-Templates)（v22.5，`855bffc`，Apache-2.0，原作者 Frédéric Guigand）
+* 原始模型模板：[Qwen/Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B)（阿里 Qwen 團隊）
+* 本專案為獨立衍生作品，非 GitHub fork；授權鏈見 [NOTICE](./NOTICE)。
+
 ## 版本說明
 
 | 版本 | 適用對象 | 內容概要 | 位置 |
