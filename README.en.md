@@ -28,9 +28,16 @@ llama.cpp / vLLM / SGLang / oMLX).
 
 ## Tested scope
 
-* Target: Qwen3.8-Next-Flash (Strata stack).
-* Quantizations: NVFP4, IQ3, IQ2, OQ4, including uncensored variants; Mac Studio tested on OQ4.
-* Hardware: RTX PRO 6000, RTX 5090, RTX 5060 Ti 16G, Mac Studio.
+All targets are Qwen3.8-Next-Flash; Qwen3.6-35B serves as a large-parameter control.
+
+| Hardware | Model | Quantization | Engine |
+|---|---|---|---|
+| RTX PRO 6000 | Qwen3.8-Next-Flash uncensored-modelopt | NVFP4 (uncensored) | SGLang v3.0.1 |
+| RTX 5090 | Qwen3.8-Next-Flash | IQ3_S (verified on two Strata hosts) | Strata |
+| RTX 5060 Ti 16G | Qwen3.8-Next-Flash | IQ2_XS | Strata |
+| Mac Studio (oMLX) | Jundot OQ4-mtp | OQ4 | oMLX |
+| Mac Studio (LM Studio) | Qwen3.8-27B (incl. JonathanColetti uncensored) | Q6_K / IQ4_XS | LM Studio |
+| Mac Studio (LM Studio, control) | Qwen3.6-35B | Q6_K | LM Studio |
 
 ## Changes (project modifications only)
 

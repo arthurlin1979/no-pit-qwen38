@@ -26,9 +26,16 @@ vLLM / SGLang / oMLX）。
 
 ## 實測範圍
 
-* 對齊目標：Qwen3.8-Next-Flash（Strata 架構）。
-* 模型精度：NVFP4、IQ3、IQ2、OQ4，含去審查版（uncensored）；其中 Mac Studio 為 OQ4。
-* 驗證硬體：RTX PRO 6000、RTX 5090、RTX 5060 Ti 16G、Mac Studio。
+本專案對齊目標為 Qwen3.8-Next-Flash；另以 Qwen3.6-35B 作大參數對照。
+
+| 硬體 | 模型 | 量化 | 推理引擎 |
+|---|---|---|---|
+| RTX PRO 6000 | Qwen3.8-Next-Flash uncensored-modelopt | NVFP4（去審查版，uncensored） | SGLang v3.0.1 |
+| RTX 5090 | Qwen3.8-Next-Flash | IQ3_S（兩台 Strata 主機驗證） | Strata |
+| RTX 5060 Ti 16G | Qwen3.8-Next-Flash | IQ2_XS | Strata |
+| Mac Studio（oMLX） | Jundot OQ4-mtp | OQ4 | oMLX |
+| Mac Studio（LM Studio） | Qwen3.8-27B（含 JonathanColetti 去審查版，uncensored） | Q6_K／IQ4_XS | LM Studio |
+| Mac Studio（LM Studio，對照組） | Qwen3.6-35B | Q6_K | LM Studio |
 
 ## 修改內容（僅列本專案的變更）
 
