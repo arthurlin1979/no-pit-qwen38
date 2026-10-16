@@ -24,6 +24,12 @@ vLLM / SGLang / oMLX）。
 | v6.2 | 小量化＋破解（uncensored）模型（預設建議版本） | v6＋空思考清理＋未閉合思考自動斷句＋動用工具前關閉思考 | `v6.2/` |
 | v6.2-alt | 實驗參考用 | v6.2＋7 項尚未證實效益的附加項；效果因人而異，請自行驗證 | `v6.2-alt/` |
 
+## 實測範圍
+
+* 對齊目標：Strata 架構上的 Qwen3.8 系列模型。
+* 模型精度：NVFP4、IQ3、IQ2，含去審查版（uncensored）。
+* 驗證硬體：RTX PRO 6000、RTX 5090、RTX 5060 Ti 16G、Mac Studio。
+
 ## 修改內容（僅列本專案的變更）
 
 基底為 `froggeric/Qwen-Fixed-Chat-Templates` v22.5（459 行，Apache-2.0，

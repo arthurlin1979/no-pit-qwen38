@@ -26,6 +26,12 @@ llama.cpp / vLLM / SGLang / oMLX).
 | v6.2 | Small-quant + uncensored models (recommended default) | v6＋empty-think cleanup＋unclosed-think auto-split＋MUST-close-thinking | `v6.2/` |
 | v6.2-alt | Experimental reference | v6.2＋7 unverified extras; effectiveness varies, verify independently | `v6.2-alt/` |
 
+## Tested scope
+
+* Target: Qwen3.8 series on the Strata stack.
+* Quantizations: NVFP4, IQ3, IQ2, including uncensored variants.
+* Hardware: RTX PRO 6000, RTX 5090, RTX 5060 Ti 16G, Mac Studio.
+
 ## Changes (project modifications only)
 
 Base: `froggeric/Qwen-Fixed-Chat-Templates` v22.5 (459 lines, Apache-2.0,
