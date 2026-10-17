@@ -88,3 +88,7 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v6.2/chat_template.j
 * `lab/strict-v6.1.jinja`：已退役的 v6.1 實驗草稿
 
 歡迎提出改進建議（Pull Request）。
+
+## 授權
+
+Apache-2.0，見 [LICENSE](./LICENSE) 與 [NOTICE](./NOTICE)。

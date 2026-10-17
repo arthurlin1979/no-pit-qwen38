@@ -94,3 +94,7 @@ Well-behaved models: use `./v6/chat_template.jinja` instead.
 * `lab/strict-v6.1.jinja`: retired v6.1 experiment draft
 
 Pull requests welcome.
+
+## License
+
+Apache-2.0, see [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
