@@ -98,7 +98,7 @@ Well-behaved models: use `./v6/chat_template.jinja` instead.
 * `v6/`: v6 build + diff vs upstream
 * `v6.2/`: v6.2 build + diff vs v6 (`v62_vs_v6.diff`)
 * `v6.2-alt/`: experimental reference build
-* `v7/`: v7 build + diff vs v6.2 (`v7_vs_v62.diff`)
+* `v7/`: v7 build + diff vs v6.2 (`v7_vs_v62.diff`) + release notes (`RELEASE.en.md`)
 * `lab/strict-v6.1.jinja`: retired v6.1 experiment draft
 
 Pull requests welcome.

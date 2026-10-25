@@ -91,7 +91,7 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v7/chat_template.jin
 * `v6/`：v6 成品＋與上游的差異比對
 * `v6.2/`：v6.2 成品＋與 v6 的差異比對（`v62_vs_v6.diff`）
 * `v6.2-alt/`：實驗參考版成品
-* `v7/`：v7 成品＋與 v6.2 的差異比對（`v7_vs_v62.diff`）
+* `v7/`：v7 成品＋與 v6.2 的差異比對（`v7_vs_v62.diff`）＋版自述（`RELEASE.md`）
 * `lab/strict-v6.1.jinja`：已退役的 v6.1 實驗草稿
 
 歡迎提出改進建議（Pull Request）。
