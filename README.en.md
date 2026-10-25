@@ -25,6 +25,7 @@ llama.cpp / vLLM / SGLang / oMLX).
 | v6 | Well-behaved models (NVFP4 etc.) | Traditional-Chinese rule＋SERIAL RULE (one tool call per turn)＋output-contract | `v6/` |
 | v6.2 | Small-quant + uncensored models (recommended default) | v6＋empty-think cleanup＋unclosed-think auto-split＋MUST-close-thinking | `v6.2/` |
 | v6.2-alt | Experimental reference | v6.2＋7 unverified extras; effectiveness varies, verify independently | `v6.2-alt/` |
+| v7 | Qwen3.8-Next-Flash needing JSON discipline (current default) | v6.2＋conditional output contract (fires on JSON tasks only) | `v7/` |
 
 ## Tested scope
 
@@ -38,6 +39,9 @@ All targets are Qwen3.8-Next-Flash; Qwen3.6-35B serves as a large-parameter cont
 | Mac Studio (oMLX) | Jundot OQ4-mtp | OQ4 | oMLX |
 | Mac Studio (LM Studio) | Qwen3.8-27B (incl. JonathanColetti uncensored) | Q6_K / IQ4_XS | LM Studio |
 | Mac Studio (LM Studio, control) | Qwen3.6-35B | Q6_K | LM Studio |
+
+JSON discipline re-test (7-item subset of suite 114): v7 eliminates all
+format-class errors (6/7; the one remainder is semantic).
 
 ## Changes (project modifications only)
 
@@ -59,6 +63,9 @@ so verify it before loading.
 * v6.2 adds three items: omit empty `<think></think>` wrappers in history,
   auto-split unclosed thinking at `<tool_call>`, and mandatory thinking
   closure before tool calls.
+* v7 adds one item: conditional output contract. When the last user message
+  contains `json` and no tools are requested, 7 JSON output rules are
+  appended to system; tool and plain-chat requests are unaffected.
 
 Per-block details and evidence status: [BLOCKS.md](./BLOCKS.md).
 
@@ -76,11 +83,11 @@ Per-block details and evidence status: [BLOCKS.md](./BLOCKS.md).
 
 ```bash
 # vLLM
-vllm serve <model> --chat-template ./v6.2/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
+vllm serve <model> --chat-template ./v7/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang (0.5.x ignores in-directory templates; pass explicitly)
-python -m sglang.launch_server --model-path <model> --chat-template ./v6.2/chat_template.jinja
+python -m sglang.launch_server --model-path <model> --chat-template ./v7/chat_template.jinja
 # llama.cpp
-llama-server -m <model.gguf> --jinja --chat-template-file ./v6.2/chat_template.jinja
+llama-server -m <model.gguf> --jinja --chat-template-file ./v7/chat_template.jinja
 # LM Studio: paste into Prompt Template and save / oMLX: overwrite the model-directory copy and restart
 ```
 
@@ -91,6 +98,7 @@ Well-behaved models: use `./v6/chat_template.jinja` instead.
 * `v6/`: v6 build + diff vs upstream
 * `v6.2/`: v6.2 build + diff vs v6 (`v62_vs_v6.diff`)
 * `v6.2-alt/`: experimental reference build
+* `v7/`: v7 build + diff vs v6.2 (`v7_vs_v62.diff`)
 * `lab/strict-v6.1.jinja`: retired v6.1 experiment draft
 
 Pull requests welcome.

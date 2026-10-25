@@ -1,0 +1,15 @@
+1c1
+< {%- set template_version = "qwen3.8-froggeric-v22.5-arthur-strict-v6.2" %}
+---
+> {%- set template_version = "qwen3.8-froggeric-v22.5-arthur-strict-v7" %}
+177a178,187
+> {%- set _oc_last = namespace(text='') %}
+> {%- for _m in _msgs[::-1] %}
+>     {%- if not _oc_last.text and _m.role == 'user' %}
+>         {%- set _oc_last.text = render_content(_m.content, false) %}
+>     {%- endif %}
+> {%- endfor %}
+> {%- if (not _has_tools) and ('json' in (_oc_last.text | lower)) %}
+>     {%- set _oc_rules = 'JSON output contract (applies to this request): 1) Output exactly one JSON value and nothing else: no Markdown code fence, no preamble, no suffix, no headings. 2) Copy requested key names verbatim; never rename, add, or drop a field. 3) When asked to preserve original wording, copy the source fragment verbatim; never paraphrase, pad, or truncate it. 4) Use the requested types: integers as numbers, booleans as true/false, missing values as null; never stringify numbers or booleans. 5) null means cleared/absent; [] means confirmed-empty. Never mix them. 6) started is not completed: continued only means started; an item stays in pending until completion is reported. 7) If unsure, emit the requested fields with null; never invent ids, filenames, or numbers.' %}
+>     {%- set _sc = _sc + '\n\n' + _oc_rules %}
+> {%- endif %}

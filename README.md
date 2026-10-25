@@ -23,6 +23,7 @@ vLLM / SGLang / oMLX）。
 | v6 | NVFP4 等格式遵循良好的模型 | 繁體中文規則＋單發限制（SERIAL RULE）＋輸出契約（output-contract） | `v6/` |
 | v6.2 | 小量化＋破解（uncensored）模型（預設建議版本） | v6＋空思考清理＋未閉合思考自動斷句＋動用工具前關閉思考 | `v6.2/` |
 | v6.2-alt | 實驗參考用 | v6.2＋7 項尚未證實效益的附加項；效果因人而異，請自行驗證 | `v6.2-alt/` |
+| v7 | 需 JSON 輸出紀律的 Qwen3.8-Next-Flash（現行預設） | v6.2＋條件式輸出契約（conditional output contract，僅 JSON 任務觸發） | `v7/` |
 
 ## 實測範圍
 
@@ -36,6 +37,8 @@ vLLM / SGLang / oMLX）。
 | Mac Studio（oMLX） | Jundot OQ4-mtp | OQ4 | oMLX |
 | Mac Studio（LM Studio） | Qwen3.8-27B（含 JonathanColetti 去審查版，uncensored） | Q6_K／IQ4_XS | LM Studio |
 | Mac Studio（LM Studio，對照組） | Qwen3.6-35B | Q6_K | LM Studio |
+
+JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7，唯一殘留為語意項）。
 
 ## 修改內容（僅列本專案的變更）
 
@@ -54,6 +57,9 @@ vLLM / SGLang / oMLX）。
   內容，不附加 Markdown 標記與說明文字。
 * v6.2 新增三項：歷史紀錄中省略空的思考（think）包裝、未閉合思考遇
   工具呼叫時自動斷句、動用工具前必須關閉思考區塊。
+* v7 新增一項：條件式輸出契約（conditional output contract）。最後一則
+  使用者訊息含 `json` 且無工具呼叫時，於 system 尾端附加 7 條 JSON 輸出
+  規則；工具題與普通對話不受影響。
 
 各區塊詳細說明與實證狀態請見 [BLOCKS.md](./BLOCKS.md)。
 
@@ -70,11 +76,11 @@ vLLM / SGLang / oMLX）。
 
 ```bash
 # vLLM
-vllm serve <model> --chat-template ./v6.2/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
+vllm serve <model> --chat-template ./v7/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang（注意：0.5.x 版會忽略模型目錄內模板，須顯式指定）
-python -m sglang.launch_server --model-path <model> --chat-template ./v6.2/chat_template.jinja
+python -m sglang.launch_server --model-path <model> --chat-template ./v7/chat_template.jinja
 # llama.cpp
-llama-server -m <model.gguf> --jinja --chat-template-file ./v6.2/chat_template.jinja
+llama-server -m <model.gguf> --jinja --chat-template-file ./v7/chat_template.jinja
 # LM Studio：貼入 Prompt Template 後存檔 / oMLX：覆寫模型目錄檔案後重啟
 ```
 
@@ -85,6 +91,7 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v6.2/chat_template.j
 * `v6/`：v6 成品＋與上游的差異比對
 * `v6.2/`：v6.2 成品＋與 v6 的差異比對（`v62_vs_v6.diff`）
 * `v6.2-alt/`：實驗參考版成品
+* `v7/`：v7 成品＋與 v6.2 的差異比對（`v7_vs_v62.diff`）
 * `lab/strict-v6.1.jinja`：已退役的 v6.1 實驗草稿
 
 歡迎提出改進建議（Pull Request）。

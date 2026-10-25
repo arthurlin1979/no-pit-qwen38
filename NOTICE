@@ -17,4 +17,6 @@ Modifications (Arthur Lin, 2026, Apache-2.0):
 - v6.2: v6 plus empty-think cleanup (C1), unclosed-think auto-split (C2),
   MUST-close-thinking instruction. See v6.2/v62_vs_v6.diff.
 - v6.2-alt: reference build with 7 additional unproven extras.
+- v7: v6.2 plus conditional output contract (fires on JSON tasks only).
+  See v7/v7_vs_v62.diff.
 - lab/strict-v6.1.jinja: retired experiment draft.
