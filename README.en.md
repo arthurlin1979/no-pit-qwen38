@@ -2,6 +2,9 @@
 
 [中文版](./README.md) | English
 
+> 🆕 v7 out (2026-10-26): v6.2＋conditional output contract; format-class
+> errors down to zero on the JSON re-test (6/7). See the [v7 release notes](./v7/RELEASE.en.md).
+
 This project improves the output templates (chat template) of the Qwen3.8
 model series. Qwen3.8 models are highly capable, but their format following
 is unstable: the heavier the quantization, the more frequent tool call

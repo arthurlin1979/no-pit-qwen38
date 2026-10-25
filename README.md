@@ -2,6 +2,9 @@
 
 [English](./README.en.md) | 中文版
 
+> 🆕 v7 上線（2026-10-26）：v6.2＋條件式輸出契約（conditional output contract），
+> JSON 紀律複驗格式類錯誤歸零（6/7）。見 [v7 版自述](./v7/RELEASE.md)。
+
 本專案用於改善 Qwen3.8 系列模型的輸出模板（chat template）。Qwen3.8
 模型能力優秀，但格式遵循（format following）不穩定：量化（quantization）
 程度越小，工具呼叫（tool call）格式錯誤越頻繁，常伴隨異常字元與對話
