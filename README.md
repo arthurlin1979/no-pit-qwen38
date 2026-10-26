@@ -10,8 +10,8 @@
 程度越小，工具呼叫（tool call）格式錯誤越頻繁，常伴隨異常字元與對話
 異常中斷。本專案透過客製輸出模板修正上述問題。
 
-適用範圍：所有支援 Jinja 模板的推理引擎（LM Studio / llama.cpp /
-vLLM / SGLang / oMLX）。
+適用範圍：所有支援 Jinja 模板的推理引擎（Strata / LM Studio / llama.cpp /
+vLLM / SGLang / oMLX）。其中 Strata 為本專案主力驗證平台。
 
 ## 上游出處（upstream）
 
@@ -78,6 +78,9 @@ JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7，唯�
 ## 使用方式
 
 ```bash
+# Strata（主力）：覆寫對應 pack 的 tokenizer 模板後重啟服務
+cp ./v7/chat_template.jinja Strata-data/packs/iq3_s/tokenizer/chat_template.jinja
+systemctl --user restart strata-iq3s
 # vLLM
 vllm serve <model> --chat-template ./v7/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang（注意：0.5.x 版會忽略模型目錄內模板，須顯式指定）

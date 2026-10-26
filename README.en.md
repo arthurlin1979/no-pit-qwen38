@@ -12,8 +12,9 @@ format errors become, often accompanied by anomalous characters and
 aborted conversations. This project addresses these issues through
 customized output templates.
 
-Scope: any inference engine accepting Jinja templates (LM Studio /
-llama.cpp / vLLM / SGLang / oMLX).
+Scope: any inference engine accepting Jinja templates (Strata / LM Studio /
+llama.cpp / vLLM / SGLang / oMLX). Strata is this project's primary
+validation platform.
 
 ## Upstream
 
@@ -85,6 +86,9 @@ Per-block details and evidence status: [BLOCKS.md](./BLOCKS.md).
 ## Usage
 
 ```bash
+# Strata (primary): overwrite the pack's tokenizer template, then restart
+cp ./v7/chat_template.jinja Strata-data/packs/iq3_s/tokenizer/chat_template.jinja
+systemctl --user restart strata-iq3s
 # vLLM
 vllm serve <model> --chat-template ./v7/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang (0.5.x ignores in-directory templates; pass explicitly)
