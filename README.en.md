@@ -108,6 +108,17 @@ Well-behaved models: use `./v6/chat_template.jinja` instead.
 * `v7/`: v7 build + diff vs v6.2 (`v7_vs_v62.diff`) + release notes (`RELEASE.en.md`)
 * `lab/strict-v6.1.jinja`: retired v6.1 experiment draft
 
+## Measured speed
+
+RTX 5060 Ti 16G (IQ2_XS, Strata), full 110-question run (Ability 100 + Think-off 10, 2026-10-19):
+
+| Item | Value |
+|---|---|
+| 110-question generation speed (median) | 51.0 tok/s |
+| 110-question generation speed (average) | 47.2 tok/s |
+| Range | 7.8 – 72.3 tok/s |
+| JSON-discipline recheck (7 questions) latency | 4–8s |
+
 Pull requests welcome.
 
 ## License

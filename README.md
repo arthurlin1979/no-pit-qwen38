@@ -100,6 +100,17 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v7/chat_template.jin
 * `v7/`：v7 成品＋與 v6.2 的差異比對（`v7_vs_v62.diff`）＋版自述（`RELEASE.md`）
 * `lab/strict-v6.1.jinja`：已退役的 v6.1 實驗草稿
 
+## 實測速度
+
+5060 Ti 16G（IQ2_XS，Strata），110 題完整跑（Ability 100 + Think-off 10，2026-10-19）：
+
+| 實測項 | 數值 |
+|---|---|
+| 110 題生成速度（中位數） | 51.0 tok/s |
+| 110 題生成速度（平均） | 47.2 tok/s |
+| 區間 | 7.8 – 72.3 tok/s |
+| JSON 紀律複驗（7 題）延遲 | 4–8s |
+
 歡迎提出改進建議（Pull Request）。
 
 ## 授權
