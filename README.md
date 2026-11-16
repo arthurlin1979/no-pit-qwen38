@@ -37,13 +37,14 @@ vLLM / SGLang / oMLX）。其中 Strata 為本專案主力驗證平台。
 | 硬體 | 模型 | 量化 | 推理引擎 |
 |---|---|---|---|
 | RTX PRO 6000 | Qwen3.8-Next-Flash uncensored-modelopt | NVFP4（去審查版，uncensored） | SGLang v3.0.1 |
-| RTX 5090 | Qwen3.8-Next-Flash | IQ3_S（兩台 Strata 主機驗證） | Strata |
+| RTX 5090（5090） | Qwen3.8-Next-Flash | IQ3_S（Strata 驗證，114 85／89） | Strata |
+| RTX 5090（5094） | Qwen3.8-Next-Flash | UD-IQ4_XS-v31（Strata 驗證，114 88／89，house 94／110） | Strata |
 | RTX 5060 Ti 16G | Qwen3.8-Next-Flash | IQ2_XS | Strata |
 | Mac Studio（oMLX） | Jundot OQ4-mtp | OQ4 | oMLX |
 | Mac Studio（LM Studio） | Qwen3.8-27B（含 JonathanColetti 去審查版，uncensored） | Q6_K／IQ4_XS | LM Studio |
 | Mac Studio（LM Studio，對照組） | Qwen3.6-35B | Q6_K | LM Studio |
 
-JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7，唯一殘留為語意項）。
+JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7）；v8 補上觸發死角後 7/7 全過（EXT-036、EXT-044 由 FAIL 轉 PASS，5094 UD-IQ4_XS-v31 實測）。
 
 ## 修改內容（僅列本專案的變更）
 
@@ -65,6 +66,10 @@ JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7，唯�
 * v7 新增一項：條件式輸出契約（conditional output contract）。最後一則
   使用者訊息含 `json` 且無工具呼叫時，於 system 尾端附加 7 條 JSON 輸出
   規則；工具題與普通對話不受影響。
+* v8 新增三項：觸發範圍擴為全部使用者訊息；觸發訊號加 JSON 骨架、
+  中文句式（只輸出／僅輸出／僅包含／只回傳／僅回傳／輸出以下／回傳以下）；
+  有工具對話在已有 tool 結果後半段也上契約（首輪不動）。另加 CODE 契約
+  （程式碼題）與必填參數禁空字串。工具題與普通對話保護照舊。
 
 各區塊詳細說明與實證狀態請見 [BLOCKS.md](./BLOCKS.md)。
 
@@ -109,6 +114,7 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v8/chat_template.jin
 * `v6.2/`：v6.2 成品＋與 v6 的差異比對（`v62_vs_v6.diff`）
 * `v6.2-alt/`：實驗參考版成品
 * `v7/`：v7 成品＋與 v6.2 的差異比對（`v7_vs_v62.diff`）＋版自述（`RELEASE.md`）
+* `v8/`：v8 成品（現行預設）＋與 v7 的差異比對（`v8_vs_v7.diff`）＋版自述（`RELEASE.md`，含適用版本釘死）
 * `lab/strict-v6.1.jinja`：已退役的 v6.1 實驗草稿
 
 ## 實測速度
@@ -121,6 +127,15 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v8/chat_template.jin
 | 110 題生成速度（平均） | 47.2 tok/s |
 | 區間 | 7.8 – 72.3 tok/s |
 | JSON 紀律複驗（7 題）延遲 | 4–8s |
+
+5094 RTX 5090（UD-IQ4_XS-v31＋v8，Strata 0.2.13.1／engine 0.1.59.1，2026-11-17）：
+
+| 實測項 | 數值 |
+|---|---|
+| 114（ability 89） | 88／89（唯一真錯 EXT-030，跨模型硬題） |
+| house 100＋10 | 94／110（Ability 85＋Agent 9／10；A07 部分完成 5／10） |
+| 128K 冷讀 prefill | 約 5500 tok/s（Q5_0 需 `STRATA_PF_FUSED_Q50=1`，否則慢一半） |
+| 暖 decode（短回） | 約 150～270 tok/s |
 
 歡迎提出改進建議（Pull Request）。
 
