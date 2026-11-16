@@ -87,8 +87,10 @@ JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7）；v8
 ```bash
 # Strata（主力）：覆寫對應 pack 的 tokenizer 模板後重啟服務（已驗：5090／5094，Strata ≥0.2.13.1）
 cp ./v8/chat_template.jinja Strata-data/packs/iq3_s/tokenizer/chat_template.jinja
+# 先備份原檔，並核對第一行浮水印是 strict-v8
 systemctl --user restart strata-iq3s
 # UD-IQ4_XS-v31 同理（pack 名換成 unsloth-ud-iq4_xs-v31；另需 STRATA_PF_FUSED_Q50=1＋STRATA_PF_F16=1，不開 prefill 慢一半）
+# 不同 pack 各放各的：iq3_s、unsloth-ud-iq4_xs-v31 的 tokenizer 目錄是獨立的，換一台不會動到另一台
 # vLLM
 vllm serve <model> --chat-template ./v8/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang（注意：0.5.x 版會忽略模型目錄內模板，須顯式指定）
@@ -101,6 +103,25 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v8/chat_template.jin
 
 1. 模型目錄法（GGUF 目錄，如 `bartowski/*`、`unsloth/*`）：備份後覆寫目錄內 `chat_template.jinja`，下次載入生效（已驗 v6.2→v8）。
 2. 單模型 JSON 覆寫法：`~/.lmstudio/.internal/user-concrete-model-default-config/<publisher>/<repo>/<file>.gguf.json` 的 `load.fields` 加 `llm.load.promptTemplate`（全文貼入＋`stopStrings: []`，少了它 LM Studio 會靜默 fallback，見 v7 血淚）。改完 `lms unload`＋`lms load`（或下次載入）。
+
+### Pennyroyal（SGLang，2026-11-17 已驗：5092 Qwen3.8 NVFP4）
+
+Pennyroyal 用 SGLang 跑，0.5.x 會忽略模型目錄內模板，必須三件一起改（缺一件就吃不到）：
+
+```bash
+# 1. 模板檔放進 host 模板目錄（先備份舊版）
+cp ./v8/chat_template.jinja /home/arthur/pennyroyal/templates/froggeric-v22.5-arthur-strict-v8.jinja
+# 2. 指針檔換路徑＋換 SHA（有校驗，錯了 serve 直接拒啟；先備份 chat-template.sh）
+#    CHAT_TEMPLATE=.../templates/froggeric-v22.5-arthur-strict-v8.jinja
+#    SHA 改成新檔的 sha256sum
+# 3. compose 加一條 mount（對照既有 v6/v6.2 的寫法），把 host 檔案掛進容器同名路徑：
+#      - type: bind
+#        source: ${PENNYROYAL_TEMPLATE_HOST:-/home/arthur/pennyroyal/templates}/froggeric-v22.5-arthur-strict-v8.jinja
+#        target: /opt/pennyroyal/configs/pennyroyal/templates/froggeric-v22.5-arthur-strict-v8.jinja
+# 4. 重建容器並驗（SGLang 載入約數分鐘）：
+docker compose -f /home/arthur/pennyroyal/docker/pennyroyal/compose.yaml up -d
+# 驗：無關鍵字 JSON 測試回 raw 即吃到；注意檔名別疊字（templates/ 只寫一次前綴）
+```
 
 ### oMLX（2026-11-17 已驗，不用重啟）
 

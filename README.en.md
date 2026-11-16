@@ -98,8 +98,10 @@ Per-block details and evidence status: [BLOCKS.md](./BLOCKS.md).
 ```bash
 # Strata (primary): overwrite the pack's tokenizer template, then restart (verified: 5090/5094, Strata ≥0.2.13.1)
 cp ./v8/chat_template.jinja Strata-data/packs/iq3_s/tokenizer/chat_template.jinja
+# Back up the original first, and check the first-line watermark reads strict-v8
 systemctl --user restart strata-iq3s
 # UD-IQ4_XS-v31, same with pack name swapped to unsloth-ud-iq4_xs-v31; also needs STRATA_PF_FUSED_Q50=1＋STRATA_PF_F16=1 (without it prefill halves)
+# Each pack has its own tokenizer dir: iq3_s and unsloth-ud-iq4_xs-v31 are independent; swapping one never touches the other
 # vLLM
 vllm serve <model> --chat-template ./v8/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang (0.5.x ignores in-directory templates; pass explicitly)
@@ -112,6 +114,25 @@ llama-server -m <model.gguf> --jinja --chat-template-file ./v8/chat_template.jin
 
 1. Model-directory method (GGUF dirs such as `bartowski/*`, `unsloth/*`): back up, then overwrite `chat_template.jinja`; takes effect on next load (verified v6.2→v8).
 2. Per-model JSON override: in `~/.lmstudio/.internal/user-concrete-model-default-config/<publisher>/<repo>/<file>.gguf.json`, add `llm.load.promptTemplate` under `load.fields` (paste full text＋`stopStrings: []` — without it LM Studio silently falls back; see the v7 lesson). Then `lms unload`＋`lms load` (or next load).
+
+### Pennyroyal (SGLang, verified 2026-11-17: 5092 Qwen3.8 NVFP4)
+
+Pennyroyal runs SGLang, which ignores in-model-directory templates — all three pieces must change together (miss one and it silently won't apply):
+
+```bash
+# 1. Drop the template into the host template dir (back up the old one first)
+cp ./v8/chat_template.jinja /home/arthur/pennyroyal/templates/froggeric-v22.5-arthur-strict-v8.jinja
+# 2. Repoint chat-template.sh and update its SHA (it checksums; a mismatch refuses to start — back up chat-template.sh first)
+#    CHAT_TEMPLATE=.../templates/froggeric-v22.5-arthur-strict-v8.jinja
+#    set SHA to the new file's sha256sum
+# 3. Add one mount to compose (mirror the existing v6/v6.2 entries) mapping the host file into the container at the same name:
+#      - type: bind
+#        source: ${PENNYROYAL_TEMPLATE_HOST:-/home/arthur/pennyroyal/templates}/froggeric-v22.5-arthur-strict-v8.jinja
+#        target: /opt/pennyroyal/configs/pennyroyal/templates/froggeric-v22.5-arthur-strict-v8.jinja
+# 4. Recreate and verify (SGLang takes minutes to load):
+docker compose -f /home/arthur/pennyroyal/docker/pennyroyal/compose.yaml up -d
+# Verify: a keyword-less JSON test returning raw means it took. Watch out for doubled filename prefixes (write templates/ only once).
+```
 
 ### oMLX (verified 2026-11-17, no restart needed)
 
