@@ -1,6 +1,18 @@
 # v8 版自述
 
-Qwen3.8 Jinja 第八版（v8）上線。修 v7 的兩個觸發死角（114 實測：EXT-036、EXT-044）。
+Qwen3.8 Jinja 第八版（v8）。
+
+## 適用版本（釘死）
+
+- 推理引擎：Strata v0.2.13.1（含）以上，engine 0.1.59.1（含）以上。v8 用的 Jinja 語法（`~` 串接、`namespace` 跨迴圈累加）需 Strata 內嵌 Jinja 支援。
+- 模型：Unsloth `Qwen3.8-Flash-Next-GGUF` 之 `UD-IQ4_XS-v31`，rev `d9620119`（全 hash `d96201194f103c906994f283f504209dc8d2a10c`，2026-11-04，4 碎片）。舊 rev `38bb39ee`（3 碎片）亦可用，觸發器與之無關。
+- 同時適用：GSQ-RCO IQ3_S（5090／5094 同版 Strata 驗證）。
+- 驗證硬體：5094（Ryzen 9 9900X＋RTX 5090 32G＋128G RAM）；5090 同配置。
+- 專為 UD-Q4 新版處理：Q5_0 down 層需 `STRATA_PF_FUSED_Q50=1`（Linux 另加 `STRATA_PF_F16=1`），否則 prefill 慢一半；此為 serve 側環境變數，非模板事，但 v8 的 114／house 分數都在該 flag 開啟下測得。
+
+## 動機
+
+修 v7 的兩個觸發死角（114 實測：EXT-036、EXT-044）。
 
 ## 改了什麼（相對 v7，見 `v8_vs_v7.diff`）
 
