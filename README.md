@@ -2,8 +2,9 @@
 
 [English](./README.en.md) | 中文版
 
-> 🆕 v7 上線（2026-10-26）：v6.2＋條件式輸出契約（conditional output contract），
-> JSON 紀律複驗格式類錯誤歸零（6/7）。見 [v7 版自述](./v7/RELEASE.md)。
+> 🆕 v8 上線（2026-11-17）：v7＋觸發覆蓋擴大（JSON 骨架／中文句式／有工具後半段），
+> EXT-036＋EXT-044 由 FAIL 轉 PASS。見 [v8 版自述](./v8/RELEASE.md)。
+> v7（2026-10-26）仍保留。
 
 本專案用於改善 Qwen3.8 系列模型的輸出模板（chat template）。Qwen3.8
 模型能力優秀，但格式遵循（format following）不穩定：量化（quantization）
@@ -26,7 +27,8 @@ vLLM / SGLang / oMLX）。其中 Strata 為本專案主力驗證平台。
 | v6 | NVFP4 等格式遵循良好的模型 | 繁體中文規則＋單發限制（SERIAL RULE）＋輸出契約（output-contract） | `v6/` |
 | v6.2 | 小量化＋破解（uncensored）模型（預設建議版本） | v6＋空思考清理＋未閉合思考自動斷句＋動用工具前關閉思考 | `v6.2/` |
 | v6.2-alt | 實驗參考用 | v6.2＋7 項尚未證實效益的附加項；效果因人而異，請自行驗證 | `v6.2-alt/` |
-| v7 | 需 JSON 輸出紀律的 Qwen3.8-Next-Flash（現行預設） | v6.2＋條件式輸出契約（conditional output contract，僅 JSON 任務觸發） | `v7/` |
+| v7 | 需 JSON 輸出紀律的 Qwen3.8-Next-Flash | v6.2＋條件式輸出契約（conditional output contract，僅 JSON 任務觸發） | `v7/` |
+| v8 | v7＋兩類觸發死角（現行預設） | v7＋JSON 骨架／中文句式觸發＋有工具後半段契約（工具格式保護不動） | `v8/` |
 
 ## 實測範圍
 
