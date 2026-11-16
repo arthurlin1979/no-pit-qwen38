@@ -80,19 +80,28 @@ JSON 紀律複驗（114 子集 7 題）：v7 格式類錯誤歸零（6/7，唯�
 ## 使用方式
 
 ```bash
-# Strata（主力）：覆寫對應 pack 的 tokenizer 模板後重啟服務
-cp ./v7/chat_template.jinja Strata-data/packs/iq3_s/tokenizer/chat_template.jinja
+# Strata（主力）：覆寫對應 pack 的 tokenizer 模板後重啟服務（已驗：5090／5094，Strata ≥0.2.13.1）
+cp ./v8/chat_template.jinja Strata-data/packs/iq3_s/tokenizer/chat_template.jinja
 systemctl --user restart strata-iq3s
+# UD-IQ4_XS-v31 同理（pack 名換成 unsloth-ud-iq4_xs-v31；另需 STRATA_PF_FUSED_Q50=1＋STRATA_PF_F16=1，不開 prefill 慢一半）
 # vLLM
-vllm serve <model> --chat-template ./v7/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
+vllm serve <model> --chat-template ./v8/chat_template.jinja --tool-call-parser qwen3_xml --reasoning-parser qwen3
 # SGLang（注意：0.5.x 版會忽略模型目錄內模板，須顯式指定）
-python -m sglang.launch_server --model-path <model> --chat-template ./v7/chat_template.jinja
+python -m sglang.launch_server --model-path <model> --chat-template ./v8/chat_template.jinja
 # llama.cpp
-llama-server -m <model.gguf> --jinja --chat-template-file ./v7/chat_template.jinja
-# LM Studio：貼入 Prompt Template 後存檔 / oMLX：覆寫模型目錄檔案後重啟
+llama-server -m <model.gguf> --jinja --chat-template-file ./v8/chat_template.jinja
 ```
 
-格式遵循良好的模型請使用 `./v6/chat_template.jinja`。
+### LM Studio（兩種裝法，2026-11-17 已驗）
+
+1. 模型目錄法（GGUF 目錄，如 `bartowski/*`、`unsloth/*`）：備份後覆寫目錄內 `chat_template.jinja`，下次載入生效（已驗 v6.2→v8）。
+2. 單模型 JSON 覆寫法：`~/.lmstudio/.internal/user-concrete-model-default-config/<publisher>/<repo>/<file>.gguf.json` 的 `load.fields` 加 `llm.load.promptTemplate`（全文貼入＋`stopStrings: []`，少了它 LM Studio 會靜默 fallback，見 v7 血淚）。改完 `lms unload`＋`lms load`（或下次載入）。
+
+### oMLX（2026-11-17 已驗，不用重啟）
+
+覆寫模型目錄 `chat_template.jinja` 即生效（per-request 讀模板，server PID 不變也吃到；v7 備份留著）。例：`~/.omlx/models/Jundot/Qwen3.8-Flash-Next-oQ4e-mtp/chat_template.jinja`。
+
+舊版對照：格式遵循良好的模型請使用 `./v6/chat_template.jinja`。
 
 ## 檔案結構
 
