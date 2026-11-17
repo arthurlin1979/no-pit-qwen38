@@ -225,6 +225,7 @@
             {{- '- If you choose to call a tool, you MUST output the <tool_call> block IMMEDIATELY, with NO conversational text before it.\n' }}
         {%- endif %}
         {{- '- The <tool_call> and <function> tags MUST be at the very beginning of a new line, with NO spaces or indentation before them.\n- To call multiple functions, output a separate, completely closed <tool_call></tool_call> block for EACH function. Do NOT nest <tool_call> blocks.\n- If you reason first, you MUST close thinking with </think> before the <tool_call> block. NEVER omit the opening <tool_call> tag.\n- SERIAL RULE (overrides the multiple-functions line above): Call at most ONE function per turn. Emit exactly one <tool_call> block, then stop and wait for the tool result before doing anything else. NEVER emit two or more <tool_call> blocks in a single response.\n- If you have all necessary data, provide your final answer directly to the user without any tool call.
+- The function name MUST match a declared tool name EXACTLY, character for character: use the bare name as listed (e.g. create_goal). NEVER add a prefix or namespace such as tools. — even if the conversation history or the request text writes it with a prefix.
 - Every required function parameter MUST have a non-empty value; NEVER emit empty-string arguments. If a value is not yet known, keep working (call another tool or reason first) instead of sending a placeholder empty string.\n</IMPORTANT>' }}
     {%- if _sc %}
         {{- '\n\n' + _sc }}
